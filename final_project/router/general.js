@@ -30,8 +30,7 @@ public_users.post("/register", (req,res) => {
 // Get the book list available in the shop
 public_users.get('/', async function (req, res) {
   try {
-    const response = await axios.get("http://localhost:5001/");
-    return res.status(200).send(JSON.stringify(response.data, null, 4));
+    return res.status(200).send(JSON.stringify(books, null, 4));
   } catch(error) {
     return res.status(404).json({message: "An error occurred while fetching the book list. Try again later."});
   }
@@ -41,8 +40,7 @@ public_users.get('/', async function (req, res) {
 public_users.get('/isbn/:isbn', async function (req, res) {
   try {
     const isbn = req.params.isbn;
-    const response = await axios.get(`http://localhost:5001/isbn/${isbn}`);
-    return res.status(200).send(JSON.stringify(response.data));
+    return res.status(200).send(JSON.stringify(books[isbn], null, 4));
   } catch (error) {
     return res.status(404).json({message: "An error occured while fetching book details. Try again later"});
   }
@@ -52,8 +50,12 @@ public_users.get('/isbn/:isbn', async function (req, res) {
 public_users.get('/author/:author', async function (req, res) {
   try {
     const author = req.params.author;
-    const response = await axios.get(`http://localhost:5001/author/${author}`);
-    return res.status(200).send(JSON.stringify(response.data));
+    const booksByAuthor = Object.keys(books).filter((key) => {
+    return books[key].author === author;
+  }).map((key) => {
+    return books[key];
+  });
+  return res.status(200).send(JSON.stringify(booksByAuthor, null, 4));
   } catch (error) {
     return res.status(404).json({message: "An error occurred while fetching book and author details. Try again later."});
     }
@@ -63,9 +65,13 @@ public_users.get('/author/:author', async function (req, res) {
 public_users.get('/title/:title', async function (req, res) {
   try {
     const title = req.params.title;
-    const response = await axios.get(`http://localhost:5001/title/${title}`);
-    return res.status(200).send(JSON.stringify(response.data));
-  } catch (error) {
+    const booksByTitle = Object.keys(books).filter((key) => {
+      return books[key].title === title;
+    }).map((key) => {
+    return books[key];
+  });
+  return res.status(200).send(JSON.stringify(booksByTitle, null, 4));
+} catch (error) {
     return res.status(404).json({message: "An error occurred while fetching the book title. Try again later."});
     }
 });
