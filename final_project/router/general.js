@@ -38,21 +38,25 @@ public_users.get('/', async function (req, res) {
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
-  const isbn = req.params.isbn;
-  res.send(books[isbn]);
+public_users.get('/isbn/:isbn', async function (req, res) {
+  try {
+    const isbn = req.params.isbn;
+    const response = await axios.get(`http://localhost:5001/isbn/${isbn}`);
+    return res.status(200).send(JSON.stringify(response.data));
+  } catch (error) {
+    return res.status(404).json({message: "An error occured while fetching book details. Try again later"});
+  }
  });
   
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
-  const author = req.params.author;
-
-  const booksByAuthor = Object.keys(books).filter((key) => {
-    return books[key].author === author;
-  }).map((key) => {
-    return books[key];
-});
-  res.send(JSON.stringify(booksByAuthor, null, 4));
+public_users.get('/author/:author', async function (req, res) {
+  try {
+    const author = req.params.author;
+    const response = await axios.get(`http://localhost:5001/author/${author}`);
+    return res.status(200).send(JSON.stringify(response.data));
+  } catch (error) {
+    return res.status(404).json({message: "An error occurred while fetching book and author details. Try again later."});
+    }
 });
 
 // Get all books based on title
