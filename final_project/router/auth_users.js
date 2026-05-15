@@ -44,8 +44,15 @@ regd_users.post("/login", (req,res) => {
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const isbn = req.params.isbn;
+  const review = req.query.review;
+  const username = req.session.authorization.username;
+
+  // If review was written by a user already, overwrite the existing review with new one
+  books[isbn].reviews[username] = review;
+
+  // Send a response confirming that review was updated
+  return res.status(200).json({message: "Review successfully added/modified!", reviews: books[isbn].reviews});
 });
 
 module.exports.authenticated = regd_users;
